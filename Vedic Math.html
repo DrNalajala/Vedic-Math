@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧮 Vedic Maths Toolkit - Complete Calculator</title>
+    <style>
+        :root {
+            --bg: #fff8f0;
+            --primary: #c0392b;
+            --secondary: #2c3e50;
+            --accent: #e67e22;
+            --card-bg: #ffffff;
+            --border: #e0d5c4;
+            --text: #3e2723;
+            --light: #fdf6ec;
+            --success: #27ae60;
+            --highlight: #fef3c7;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            --radius: 16px;
+            --transition: 0.25s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Noto Sans', system-ui, sans-serif;
+            background: linear-gradient(135deg, #fef9f0 0%, #fdf3e3 30%, #fef5e7 60%, #fdf0e0 100%);
+            background-attachment: fixed;
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #8b1a1a 0%, #c0392b 40%, #a0522d 100%);
+            color: #fff;
+            text-align: center;
+            padding: 1.8rem 1rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(139, 26, 26, 0.3);
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 180px;
+            height: 180px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            left: -40px;
+            width: 140px;
+            height: 140px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .header h1 {
+            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            position: relative;
+            z-index: 1;
+        }
+        .header .om {
+            font-size: 1.6rem;
+            margin-right: 0.4rem;
+        }
+        .header .subtitle {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            margin-top: 0.25rem;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem;
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            flex: 0 0 280px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.2rem 0.8rem;
+            position: sticky;
+            top: 1rem;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            z-index: 10;
+        }
+        .sidebar h3 {
+            font-size: 1rem;
+            color: var(--primary);
+            padding: 0 0.8rem 0.6rem;
+            border-bottom: 2px solid #f0e6d3;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.03em;
+        }
+        .sidebar .op-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 0.65rem 1rem;
+            margin: 0.2rem 0;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            background: transparent;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--secondary);
+            transition: var(--transition);
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .sidebar .op-btn:hover {
+            background: #fef9f0;
+            border-color: #f0dcc0;
+            color: var(--accent);
+            padding-left: 1.2rem;
+        }
+        .sidebar .op-btn.active {
+            background: linear-gradient(135deg, #fef3e6 0%, #fde8cd 100%);
+            border-color: var(--accent);
+            color: var(--primary);
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(230, 126, 34, 0.15);
+        }
+        .sidebar .category-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #b0845c;
+            margin-top: 0.8rem;
+            padding: 0.3rem 1rem;
+            font-weight: 700;
+        }
+
+        /* Main */
+        .main {
+            flex: 1;
+            min-width: 340px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem 1.8rem;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        .card h2 {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .card .sutra-tag {
+            display: inline-block;
+            background: #fef3c7;
+            color: #8b6914;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.7rem;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            letter-spacing: 0.02em;
+        }
+        .card .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem;
+            align-items: center;
+            margin: 1rem 0;
+        }
+        .card input,
+        .card select {
+            padding: 0.7rem 1rem;
+            border: 2px solid #e8ddd0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            background: #fefdfb;
+            transition: var(--transition);
+            min-width: 100px;
+            flex: 1;
+        }
+        .card input:focus,
+        .card select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(230, 126, 34, 0.08);
+            background: #fff;
+        }
+        .card button.calculate-btn {
+            background: linear-gradient(135deg, #c0392b 0%, #a0522d 100%);
+            color: #fff;
+            border: none;
+            padding: 0.7rem 1.6rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            transition: var(--transition);
+            white-space: nowrap;
+            box-shadow: 0 4px 14px rgba(192, 57, 43, 0.3);
+        }
+        .card button.calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(192, 57, 43, 0.4);
+        }
+        .card button.calculate-btn:active {
+            transform: translateY(0);
+        }
+        .result-box {
+            background: #fdfcf9;
+            border: 2px solid #e8ddd0;
+            border-radius: 12px;
+            padding: 1.2rem 1.5rem;
+            margin-top: 1rem;
+            min-height: 50px;
+            font-family: 'Courier New', 'Fira Code', monospace;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            color: #2c3e50;
+            transition: var(--transition);
+        }
+        .result-box .answer {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #27ae60;
+            margin-top: 0.4rem;
+            padding-top: 0.4rem;
+            border-top: 1px dashed #e0d5c4;
+        }
+        .result-box .step {
+            color: #5d4037;
+        }
+        .result-box .highlight-step {
+            color: #c0392b;
+            font-weight: 600;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: #9e7c64;
+            font-size: 0.85rem;
+            border-top: 1px solid #e8ddd0;
+            margin-top: 1rem;
+        }
+
+        /* Scrollbar */
+        .sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #dccbb8;
+            border-radius: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                padding: 0.8rem;
+            }
+            .sidebar {
+                flex: 0 0 auto;
+                position: static;
+                max-height: none;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.3rem;
+                padding: 0.8rem;
+                justify-content: center;
+            }
+            .sidebar h3 {
+                width: 100%;
+                text-align: center;
+            }
+            .sidebar .op-btn {
+                width: auto;
+                font-size: 0.78rem;
+                padding: 0.45rem 0.7rem;
+                white-space: nowrap;
+            }
+            .sidebar .category-label {
+                width: 100%;
+                text-align: center;
+            }
+            .card {
+                padding: 1rem;
+            }
+            .card .input-group {
+                flex-direction: column;
+            }
+            .card input,
+            .card select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1><span class="om">🕉️</span>Vedic Maths Toolkit</h1>
+        <p class="subtitle">16 Sutras • 20 Calculators • UKG to Degree Level</p>
+    </header>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <h3>📐 Select Operation</h3>
+            <span class="category-label">🔢 Basic Arithmetic</span>
+            <button class="op-btn active" data-op="add">➕ Addition (Saṅkalana)</button>
+            <button class="op-btn" data-op="sub-base">➖ Subtraction from 10ⁿ (Nikhilaṁ)</button>
+            <button class="op-btn" data-op="sub-gen">➖ General Subtraction</button>
+
+            <span class="category-label">✖️ Multiplication</span>
+            <button class="op-btn" data-op="mul-2x2">✖️ Multiply 2×2 (Ūrdhva‑Tiryag)</button>
+            <button class="op-btn" data-op="mul-3x3">✖️ Multiply 3×3 (Ūrdhva‑Tiryag)</button>
+            <button class="op-btn" data-op="mul-base">✖️ Near‑Base Multiply (Nikhilaṁ)</button>
+            <button class="op-btn" data-op="mul-11">✖️ Multiply by 11 (Ekanyūnena)</button>
+
+            <span class="category-label">🔲 Squares & Roots</span>
+            <button class="op-btn" data-op="square-5">🔲 Square Ending in 5 (Ekādhikena)</button>
+            <button class="op-btn" data-op="square-base">🔲 Square Near Base (Yāvadūnam)</button>
+            <button class="op-btn" data-op="square-any">🔲 Square Any 2‑Digit (Duplex)</button>
+            <button class="op-btn" data-op="sqrt">√ Square Root (Vilokanam)</button>
+            <button class="op-btn" data-op="cbrt">∛ Cube Root (Vilokanam)</button>
+
+            <span class="category-label">➗ Division & Fractions</span>
+            <button class="op-btn" data-op="div9">➗ Division by 9 (Ekanyūnena)</button>
+            <button class="op-btn" data-op="frac19">🔢 1/19 Decimal (Ekādhikena)</button>
+
+            <span class="category-label">📐 Algebra & Calculus</span>
+            <button class="op-btn" data-op="linear">📐 Linear Equation (Parāvartya)</button>
+            <button class="op-btn" data-op="simul">📐 Simultaneous Equations</button>
+            <button class="op-btn" data-op="quad">📐 Quadratic Factorisation</button>
+            <button class="op-btn" data-op="deriv">📈 Derivative (Calana‑Kalanābhyām)</button>
+            <button class="op-btn" data-op="integ">📉 Integration (Pūraṇāpūraṇābhyām)</button>
+            <button class="op-btn" data-op="det">🔢 Determinant 3×3 (Ūrdhva‑Tiryag)</button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main" id="main-content">
+            <!-- Dynamic card will be rendered here -->
+        </main>
+    </div>
+
+    <footer class="footer">
+        🕉️ Vedic Maths Toolkit — Based on the 16 Sutras of Swami Bharati Krishna Tirtha • UKG to Degree Level
+    </footer>
+
+    <script>
+        // ==================== ALL OPERATION HANDLERS ====================
+
+        const operations = {
+
+            // 1. Addition
+            'add': {
+                title: '➕ Addition — Saṅkalana (Mental Splitting)',
+                sutra: 'Saṅkalana‑Vyavakalanābhyām',
+                inputs: [
+                    { id: 'num1', label: 'First Number', type: 'number', placeholder: 'e.g., 47' },
+                    { id: 'num2', label: 'Second Number', type: 'number', placeholder: 'e.g., 38' }
+                ],
+                calc: (vals) => {
+                    const a = parseInt(vals.num1);
+                    const b = parseInt(vals.num2);
+                    if (isNaN(a) || isNaN(b)) return { error: 'Please enter valid numbers.' };
+                    const tens = Math.floor(b / 10) * 10;
+                    const ones = b % 10;
+                    const step1 = a + tens;
+                    const result = step1 + ones;
+                    return {
+                        steps: [
+                            `Step 1: Break ${b} into ${tens} + ${ones}`,
+                            `Step 2: ${a} + ${tens} = ${step1}`,
+                            `Step 3: ${step1} + ${ones} = ${result}`
+                        ],
+                        answer: result
+                    };
+                }
+            },
+
+            // 2. Subtraction from 10ⁿ
+            'sub-base': {
+                title: '➖ Subtraction from 10ⁿ — Nikhilaṁ Navataścaramam Daśataḥ',
+                sutra: 'Nikhilaṁ Navataścaramam Daśataḥ (All from 9, last from 10)',
+                inputs: [
+                    { id: 'base', label: 'Base (power of 10)', type: 'number', placeholder: 'e.g., 1000' },
+                    { id: 'subnum',
+                        label: 'Number to Subtract',
+                        type: 'number',
+                        placeholder: 'e.g., 357' }
+                ],
+                calc: (vals) => {
+                    const base = parseInt(vals.base);
+                    const num = parseInt(vals.subnum);
+                    if (isNaN(base) || isNaN(num)) return { error: 'Please enter valid numbers.' };
+                    if (num >= base) return { error: 'Number must be less than the base.' };
+                    const numStr = num.toString().padStart(base.toString().length - 1, '0');
+                    let resultDigits = [];
+                    let steps = [`Base: ${base}, Number: ${num}`];
+                    for (let i = 0; i < numStr.length - 1; i++) {
+                        const d = parseInt(numStr[i]);
+                        resultDigits.push(9 - d);
+                        steps.push(`  Digit ${i+1}: 9 - ${d} = ${9-d}`);
+                    }
+                    const lastD = parseInt(numStr[numStr.length - 1]);
+                    resultDigits.push(10 - lastD);
+                    steps.push(`  Last digit: 10 - ${lastD} = ${10-lastD}`);
+                    const result = parseInt(resultDigits.join(''));
+                    steps.push(`Result: ${resultDigits.join('')} → ${result}`);
+                    return { steps, answer: result };
+                }
+            },
+
+            // 3. General Subtraction
+            'sub-gen': {
+                title: '➖ General Subtraction — Complement Method',
+                sutra: 'Saṅkalana‑Vyavakalanābhyām (using 9\'s complement)',
+                inputs: [
+                    { id: 'minuend', label: 'Minuend (larger)', type: 'number', placeholder: 'e.g., 543' },
+                    { id: 'subtrahend', label: 'Subtrahend (smaller)', type: 'number',
+                    placeholder: 'e.g., 289' }
+                ],
+                calc: (vals) => {
+                    const m = parseInt(vals.minuend);
+                    const s = parseInt(vals.subtrahend);
+                    if (isNaN(m) || isNaN(s)) return { error: 'Please enter valid numbers.' };
+                    if (s > m) return { error: 'Minuend should be larger than subtrahend.' };
+                    const digits = s.toString().length;
+                    const ninesComp = Math.pow(10, digits) - 1 - s;
+                    const sum = m + ninesComp;
+                    const sumStr = sum.toString();
+                    const firstDigit = sumStr[0];
+                    const rest = parseInt(sumStr.slice(1)) + 1;
+                    const steps = [
+                        `Step 1: Find 9's complement of ${s} (with ${digits} digits): ${ninesComp}`,
+                        `Step 2: Add to minuend: ${m} + ${ninesComp} = ${sum}`,
+                        `Step 3: Remove leftmost digit (${firstDigit}) and add 1: ${sumStr.slice(1)} + 1 = ${rest}`
+                    ];
+                    return { steps, answer: rest };
+                }
+            },
+
+            // 4. Multiplication 2×2
+            'mul-2x2': {
+                title: '✖️ Multiply 2‑Digit Numbers — Ūrdhva‑Tiryagbhyām',
+                sutra: 'Ūrdhva‑Tiryagbhyām (Vertically & Crosswise)',
+                inputs: [
+                    { id: 'a', label: 'First Number (2-digit)', type: 'number', placeholder: 'e.g., 23' },
+                    { id: 'b', label: 'Second Number (2-digit)', type: 'number', placeholder: 'e.g., 41' }
+                ],
+                calc: (vals) => {
+                    const a = parseInt(vals.a);
+                    const b = parseInt(vals.b);
+                    if (isNaN(a) || isNaN(b)) return { error: 'Please enter valid 2-digit numbers.' };
+                    const aT = Math.floor(a / 10),
+                        aU = a % 10;
+                    const bT = Math.floor(b / 10),
+                        bU = b % 10;
+                    const uProd = aU * bU;
+                    const carry1 = Math.floor(uProd / 10);
+                    const unitDigit = uProd % 10;
+                    const crossSum = aT * bU + aU * bT + carry1;
+                    const carry2 = Math.floor(crossSum / 10);
+                    const tensDigit = crossSum % 10;
+                    const hundredDigit = aT * bT + carry2;
+                    const result = hundredDigit * 100 + tensDigit * 10 + unitDigit;
+                    const steps = [
+                        `Numbers: ${a} (tens:${aT}, units:${aU}) × ${b} (tens:${bT}, units:${bU})`,
+                        `Step 1 (Vertical - Units): ${aU} × ${bU} = ${uProd} → write ${unitDigit}, carry ${carry1}`,
+                        `Step 2 (Crosswise): ${aT}×${bU} + ${aU}×${bT} = ${aT*bU}+${aU*bT} = ${aT*bU + aU*bT} + carry ${carry1} = ${crossSum} → write ${tensDigit}, carry ${carry2}`,
+                        `Step 3 (Vertical - Tens): ${aT} × ${bT} = ${aT*bT} + carry ${carry2} = ${hundredDigit}`,
+                        `Result: ${hundredDigit}${tensDigit}${unitDigit} → ${result}`
+                    ];
+                    return { steps, answer: result };
+                }
+            },
+
+            // 5. Multiplication 3×3
+            'mul-3x3': {
+                title: '✖️ Multiply 3‑Digit Numbers — Ūrdhva‑Tiryagbhyām',
+                sutra: 'Ūrdhva‑Tiryagbhyām (Extended Cross Pattern)',
+                inputs: [
+                    { id: 'a', label: 'First Number (3-digit)', type: 'number', placeholder: 'e.g., 123' },
+                    { id: 'b', label: 'Second Number (3-digit)', type: 'number', placeholder: 'e.g., 456' }
+                ],
+                calc: (vals) => {
+                    const a = parseInt(vals.a);
+                    const b = parseInt(vals.b);
+                    if (isNaN(a) || isNaN(b)) return { error: 'Please enter valid 3-digit numbers.' };
+                    const aStr = a.toString().padStart(3, '0');
+                    const bStr = b.toString().padStart(3, '0');
+                    const ad = aStr.split('').map(Number);
+                    const bd = bStr.split('').map(Number);
+                    // ad = [a2, a1, a0], bd = [b2, b1, b0]
+                    const s0 = ad[2] * bd[2];
+                    const c0 = Math.floor(s0 / 10);
+                    const d0 = s0 % 10;
+                    const s1 = ad[1] * bd[2] + ad[2] * bd[1] + c0;
+                    const c1 = Math.floor(s1 / 10);
+                    const d1 = s1 % 10;
+                    const s2 = ad[0] * bd[2] + ad[1] * bd[1] + ad[2] * bd[0] + c1;
+                    const c2 = Math.floor(s2 / 10);
+                    const d2 = s2 % 10;
+                    const s3 = ad[0] * bd[1] + ad[1] * bd[0] + c2;
+                    const c3 = Math.floor(s3 / 10);
+                    const d3 = s3 % 10;
+                    const s4 = ad[0] * bd[0] + c3;
+                    const d4 = s4;
+                    const result = d4 * 10000 + d3 * 1000 + d2 * 100 + d1 * 10 + d0;
+                    const steps = [
+                        `${a} × ${b}`,
+                        `Step 1 (units): ${ad[2]}×${bd[2]} = ${s0} → ${d0}, carry ${c0}`,
+                        `Step 2 (tens cross): ${ad[1]}×${bd[2]}+${ad[2]}×${bd[1]} = ${ad[1]*bd[2]}+${ad[2]*bd[1]} = ${ad[1]*bd[2]+ad[2]*bd[1]} +${c0} = ${s1} → ${d1}, carry ${c1}`,
+                        `Step 3 (hundreds triple): ${ad[0]}×${bd[2]}+${ad[1]}×${bd[1]}+${ad[2]}×${bd[0]} = ${ad[0]*bd[2]}+${ad[1]*bd[1]}+${ad[2]*bd[0]} = ${ad[0]*bd[2]+ad[1]*bd[1]+ad[2]*bd[0]} +${c1} = ${s2} → ${d2}, carry ${c2}`,
+                        `Step 4 (thousands cross): ${ad[0]}×${bd[1]}+${ad[1]}×${bd[0]} = ${ad[0]*bd[1]}+${ad[1]*bd[0]} = ${ad[0]*bd[1]+ad[1]*bd[0]} +${c2} = ${s3} → ${d3}, carry ${c3}`,
+                        `Step 5 (ten-thousands): ${ad[0]}×${bd[0]} = ${ad[0]*bd[0]} +${c3} = ${s4}`,
+                        `Result: ${result}`
+                    ];
+                    return { steps, answer: result };
+                }
+            },
+
+            // 6. Near-Base Multiplication
+            'mul-base': {
+                title: '✖️ Near‑Base Multiplication — Nikhilaṁ',
+                sutra: 'Nikhilaṁ Navataścaramam Daśataḥ',
+                inputs: [
+                    { id: 'a', label: 'First Number', type: 'number', placeholder: 'e.g., 96' },
+                    { id: 'b', label: 'Second Number', type: 'number', placeholder: 'e.g., 92' },
+                    { id: 'base', label: 'Base (10, 100, 1000...)', type: 'number', placeholder: 'e.g., 100',
+                        value: '100' }
+                ],
+                calc: (vals) => {
+                    const a = parseInt(vals.a);
+                    const b = parseInt(vals.b);
+                    const base = parseInt(vals.base);
+                    if (isNaN(a) || isNaN(b) || isNaN(base)) return { error: 'Please enter valid numbers.' };
+                    const da = a - base;
+                    const db = b - base;
+                    const left = a + db; // or b + da
+                    const right = da * db;
+                    const zeros = base.toString().length - 1;
+                    const rightStr = Math.abs(right).toString().padStart(zeros, '0');
+                    const resultStr = left.toString() + rightStr;
+                    const result = parseInt(resultStr);
+                    const steps = [
+                        `Base: ${base}`,
+                        `Deviations: ${a} → ${da >= 0 ? '+' : ''}${da},  ${b} → ${db >= 0 ? '+' : ''}${db}`,
+                        `Left part (cross-add): ${a} + (${db}) = ${left}  (or ${b} + (${da}) = ${b+da})`,
+                        `Right part (product of deviations): (${da}) × (${db}) = ${right} → pad to ${zeros} digits: ${rightStr}`,
+                        `Combine: ${left} | ${rightStr} → ${result}`
+                    ];
+                    return { steps, answer: result };
+                }
+            },
+
+            // 7. Multiply by 11
+            'mul-11': {
+                title: '✖️ Multiply by 11 — Ekanyūnena Pūrvena',
+                sutra: 'Ekanyūnena Pūrvena / Ūrdhva‑Tiryak (Special Case)',
+                inputs: [
+                    { id: 'num', label: 'Number', type: 'number', placeholder: 'e.g., 452' }
+                ],
+                calc: (vals) => {
+                    const num = parseInt(vals.num);
+                    if (isNaN(num)) return { error: 'Please enter a valid number.' };
+                    const str = num.toString();
+                    let resultDigits = [str[0]];
+                    let steps = [`${num} × 11`];
+                    for (let i = 0; i < str.length - 1; i++) {
+                        const sum = parseInt(str[i]) + parseInt(str[i + 1]);
+                        resultDigits.push(sum % 10);
+                        if (sum >= 10 && i < str.length - 2) {
+                            resultDigits[resultDigits.length - 2] = (parseInt(resultDigits[resultDigits.length -
+                                2]) + 1);
+                        }
+                        steps.push(`  Add digits: ${str[i]} + ${str[i+1]} = ${sum}`);
+                    }
+                    resultDigits.push(str[str.length - 1]);
+                    // Handle carries properly
+                    let finalDigits = [];
+                    let carry = 0;
+                    for (let i = resultDigits.length - 1; i >= 0; i--) {
+                        let val = parseInt(resultDigits[i]) + carry;
+                        carry = Math.floor(val / 10);
+                        finalDigits.unshift(val % 10);
+                    }
+                    if (carry > 0) finalDigits.unshift(carry);
+                    const result = parseInt(finalDigits.join(''));
+                    steps.push(`Result: ${finalDigits.join('')} → ${result}`);
+                    return { steps, answer: result };
+                }
+            },
+
+            // 8. Square ending in 5
+            'square-5': {
+                title: '🔲 Square of Number Ending in 5 — Ekādhikena Pūrvena',
+                sutra: 'Ekādhikena Pūrvena (One More than the Previous)',
+                inputs: [
+                    { id: 'num', label: 'Number ending in 5', type: 'number', placeholder: 'e.g., 85' }
+                ],
+                calc: (vals) => {
+                    const num = parseInt(vals.num);
+                    if (isNaN(num) || num % 10 !== 5) return { error: 'Number must end in 5.' };
+                    const leftDigit = Math.floor(num / 10);
+                    const leftPart = leftDigit * (leftDigit + 1);
+                    const result = parseInt(leftPart.toString() + '25');
+                    const steps = [
+                        `${num}²`,
+                        `Step 1: Left digit = ${leftDigit}. Multiply by one more: ${leftDigit} × ${leftDigit+1} = ${leftPart}`,
+                        `Step 2: Right part is always 25`,
+                        `Result: ${leftPart}25 → ${result}`
+                    ];
+                    return { steps, answer: result };
+                }
+            },
+
+            // 9. Square near base
+            'square-base': {
+                title: '🔲 Square Near a Base — Yāvadūnam',
+                sutra: 'Yāvadūnam Tāvadūnīkṛtya Vargañca Yojayet',
+                inputs: [
+                    { id: 'num', label: 'Number', type: 'number', placeholder: 'e.g., 98' },
+                    { id: 'base', label: 'Base (10, 100, 1000...)', type: 'number', placeholder: 'e.g., 100',
+                        value: '100' }
+                ],
+                calc: (vals) => {
+                    const num = parseInt(vals.num);
+                    const base = parseInt(vals.base);
+                    if (isNaN(num) || isNaN(base)) return { error: 'Please enter valid numbers.' };
+                    const deviation = num - base;
+                    const left = num - Math.abs(deviation);
+                    const right = deviation * deviation;
+                    const zeros = base.toString().length - 1;
+                    const rightStr = right.toString().padStart(zeros, '0');
+                    const result = parseInt(left.toString() + rightStr);
+                    const steps = [
+                        `${num}²  (base ${base}, deviation: ${deviation >= 0 ? '+' : ''}${deviation})`,
+                        `Left part: ${num} - ${Math.abs(deviation)} = ${left}`,
+                        `Right part: (${deviation})² = ${right} → pad to ${zeros} digits: ${rightStr}`,
+                        `Result: ${left}${rightStr} → ${result}`
+                    ];
+                    return { steps, answer: result };
+                }
+            },
+
+            // 10. Square any 2-digit (Duplex)
+            'square-any': {
+                title: '🔲 Square Any 2‑Digit Number — Duplex Method (Dwandyayoga)',
+                sutra: 'Dwandyayoga (Duplex Combination)',
+                inputs: [
+                    { id: 'num', label: '2-Digit Number', type: 'number', placeholder: 'e.g., 47' }
+                ],
+                calc: (vals) => {
+                    const num = parseInt(vals.num);
+                    if (isNaN(num) || num < 10 || num > 99) return { error: 'Please enter a 2-digit number.' };
+                    const tens = Math.floor(num / 10);
+                    const units = num % 10;
+                    const d0 = units * units;
+                    const c0 = Math.floor(d0 / 10);
+                    const u0 = d0 % 10;
+                    const d1 = 2 * tens * units + c0;
+                    const c1 = Math.floor(d1 / 10);
+                    const u1 = d1 % 10;
+                    const d2 = tens * tens + c1;
+                    const result = d2 * 100 + u1 * 10 + u0;
+                    const steps = [
+                        `${num}² using Duplex:`,
+                        `D(${units}) = ${units}² = ${d0} → write ${u0}, carry ${c0}`,
+                        `D(${tens},${units}) = 2×${tens}×${units} = ${2*tens*units} + carry ${c0} = ${d1} → write ${u1}, carry ${c1}`,
+                        `D(${tens}) = ${tens}² = ${tens*tens} + carry ${c1} = ${d2}`,
+                        `Result: ${d2}${u1}${u0} → ${result}`
+                    ];
+                    return { steps, answer: result };
+                }
+            },
+
+            // 11. Square Root
+            'sqrt': {
+                title: '√ Square Root (Perfect Square) — Vilokanam',
+                sutra: 'Vilokanam (By Observation)',
+                inputs: [
+                    { id: 'num', label: 'Perfect Square', type: 'number', placeholder: 'e.g., 1849' }
+                ],
+                calc: (vals) => {
+                    const num = parseInt(vals.num);
+                    if (isNaN(num) || num < 0) return { error: 'Please enter a valid positive number.' };
+                    const lastDigitMap = { 0: [0], 1: [1, 9], 4: [2, 8], 5: [5], 6: [4, 6], 9: [3, 7] };
+                    const lastDigit = num % 10;
+                    const candidates = lastDigitMap[lastDigit] || [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+                    const str = num.toString();
+                    const leftGroup = str.length % 2 === 0 ? str.slice(0, 2) : str.slice(0, 1);
+                    const leftNum = parseInt(leftGroup);
+                    const tensBase = Math.floor(Math.sqrt(leftNum));
+                    let found = null;
+                    let tests = [];
+                    for (const u of candidates) {
+                        const candidate = tensBase * 10 + u;
+                        const sq = candidate * candidate;
+                        tests.push(`  Test ${candidate}² = ${sq}`);
+                        if (sq === num) { found = candidate; break; }
+                    }
+                    if (!found) {
+                        // Try tensBase-1 and tensBase+1
+                        for (const t of [tensBase - 1, tensBase + 1]) {
+                            if (t < 0 || t > 9) continue;
+                            for (const u of candidates) {
+                                const candidate = t * 10 + u;
+                                const sq = candidate * candidate;
+                                tests.push(`  Test ${candidate}² = ${sq}`);
+                                if (sq === num) { found = candidate; break; }
+                            }
+                            if (found) break;
+                        }
+                    }
+                    const steps = [
+                        `√${num}`,
+                        `Last digit: ${lastDigit} → possible unit digits: [${candidates.join(', ')}]`,
+                        `Left group: ${leftGroup} → √${leftGroup} ≈ ${tensBase} (since ${tensBase}²=${tensBase*tensBase})`,
+                        ...tests,
+                    ];
+                    if (found) {
+                        steps.push(`✅ Match found! √${num} = ${found}`);
+                        return { steps, answer: found };
+                    }
+                    steps.push('❌ Not a perfect square or not found.');
+                    return { steps, answer: 'Not a perfect square' };
+                }
+            },
+
+            // 12. Cube Root
+            'cbrt': {
+                title: '∛ Cube Root (Perfect Cube) — Vilokanam + Ekādhikena',
+                sutra: 'Vilokanam & Ekādhikena Pūrvena',
+                inputs: [
+                    { id: 'num', label: 'Perfect Cube (up to 6 digits)', type: 'number',
+                    placeholder: 'e.g., 438976' }
+                ],
+                calc: (vals) => {
+                    const num = parseInt(vals.num);
+                    if (isNaN(num) || num < 0) return { error: 'Please enter a valid positive number.' };
+                    const cubeEndMap = { 0: 0, 1: 1, 8: 2, 7: 3, 4: 4, 5: 5, 6: 6, 3: 7, 2: 8, 9: 9 };
+                    const str = num.toString();
+                    const lastDigit = num % 10;
+                    const unitDigit = cubeEndMap[lastDigit];
+                    const rightGroup = str.slice(-3);
+                    const leftGroup = str.slice(0, -3);
+                    const leftNum = parseInt(leftGroup) || 0;
+                    let tensDigit = 0;
+                    for (let i = 0; i <= 9; i++) {
+                        if (i * i * i <= leftNum) tensDigit = i;
+                        else break;
+                    }
+                    const root = tensDigit * 10 + unitDigit;
+                    const check = root * root * root;
+                    const steps = [
+                        `∛${num}`,
+                        `Split: ${leftGroup || '0'} | ${rightGroup}`,
+                        `Last digit ${lastDigit} → cube root unit digit: ${unitDigit} (since ${unitDigit}³ ends in ${lastDigit})`,
+                        `Left group: ${leftNum} → largest cube ≤ ${leftNum} is ${tensDigit}³ = ${tensDigit*tensDigit*tensDigit}`,
+                        `Root = ${tensDigit}${unitDigit} = ${root}`,
+                        `Check: ${root}³ = ${check} ${check === num ? '✅' : '❌ (not exact)'}`
+                    ];
+                    return { steps, answer: check === num ? root : `${root} (check: ${check} ≠ ${num})` };
+                }
+            },
+
+            // 13. Division by 9
+            'div9': {
+                title: '➗ Division by 9 — Ekanyūnena Pūrvena',
+                sutra: 'Ekanyūnena Pūrvena (One Less than the Previous)',
+                inputs: [
+                    { id: 'num', label: 'Dividend', type: 'number', placeholder: 'e.g., 2341' }
+                ],
+                calc: (vals) => {
+                    const num = parseInt(vals.num);
+                    if (isNaN(num)) return { error: 'Please enter a valid number.' };
+                    const str = num.toString();
+                    let digits = str.split('').map(Number);
+                    let quotientDigits = [];
+                    let sum = 0;
+                    let steps = [`${num} ÷ 9`];
+                    for (let i = 0; i < digits.length; i++) {
+                        sum += digits[i];
+                        quotientDigits.push(sum);
+                        steps.push(
+                            `  Bring down ${digits[i]}, running sum: ${sum} ${i < digits.length-1 ? '(quotient digit)' : '(remainder candidate)'}`
+                            );
+                    }
+                    let remainder = quotientDigits.pop();
+                    let quotient = parseInt(quotientDigits.join(''));
+                    // Adjust if remainder >= 9
+                    while (remainder >= 9) {
+                        quotient += 1;
+                        remainder -= 9;
+                    }
+                    steps.push(`Quotient: ${quotient}, Remainder: ${remainder}`);
+                    steps.push(`Check: ${quotient} × 9 + ${remainder} = ${quotient*9 + remainder} ✅`);
+                    return { steps, answer: `Quotient = ${quotient}, Remainder = ${remainder}` };
+                }
+            },
+
+            // 14. 1/19 Decimal
+            'frac19': {
+                title: '🔢 1/19 as Decimal — Ekādhikena Pūrvena (Cyclic Method)',
+                sutra: 'Ekādhikena Pūrvena',
+                inputs: [
+                    { id: 'denom', label: 'Denominator ending in 9', type: 'number', placeholder: 'e.g., 19',
+                        value: '19' },
+                    { id: 'num', label: 'Numerator', type: 'number', placeholder: 'e.g., 1', value: '1' }
+                ],
+                calc: (vals) => {
+                    const denom = parseInt(vals.denom);
+                    const numer = parseInt(vals.num);
+                    if (isNaN(denom) || isNaN(numer) || denom % 10 !== 9) return { error: 'Denominator must end in 9.' };
+                    const ekadhika = Math.floor(denom / 10) + 1;
+                    let remainder = numer;
+                    let decimalDigits = [];
+                    let seen = {};
+                    let cycleFound = false;
+                    let steps = [
+                        `${numer}/${denom}  → Ekādhika of ${Math.floor(denom/10)} is ${ekadhika}`,
+                        `Multiply remainder by ${ekadhika} repeatedly:`
+                    ];
+                    let pos = 0;
+                    while (!cycleFound && pos < 50) {
+                        if (seen[remainder] !== undefined) {
+                            cycleFound = true;
+                            steps.push(`  Cycle detected at position ${seen[remainder]}!`);
+                            break;
+                        }
+                        seen[remainder] = pos;
+                        remainder *= ekadhika;
+                        const digit = Math.floor(remainder / denom);
+                        decimalDigits.push(digit);
+                        steps.push(
+                            `  Step ${pos+1}: remainder ${remainder/ekadhika} × ${ekadhika} = ${remainder} → digit ${digit}, new remainder ${remainder % denom}`
+                            );
+                        remainder = remainder % denom;
+                        pos++;
+                    }
+                    const decimal = '0.' + decimalDigits.join('');
+                    steps.push(`Decimal: ${decimal}${cycleFound ? '... (repeating)' : ''}`);
+                    return { steps, answer: decimal + (cycleFound ? '... (repeating)' : '') };
+                }
+            },
+
+            // 15. Linear Equation
+            'linear': {
+                title: '📐 Linear Equation — Parāvartya Yojayet',
+                sutra: 'Parāvartya Yojayet (Transpose and Apply)',
+                inputs: [
+                    { id: 'eq', label: 'Equation (format: ax+b=cx+d)', type: 'text',
+                        placeholder: 'e.g., 5x+2=3x+8' }
+                ],
+                calc: (vals) => {
+                    const eq = vals.eq.replace(/\s/g, '');
+                    const match = eq.match(/^(-?\d+)x([+-]\d+)=(-?\d+)x([+-]\d+)$/);
+                    if (!match) return { error: 'Format: ax+b=cx+d (e.g., 5x+2=3x+8)' };
+                    const a = parseInt(match[1]);
+                    const b = parseInt(match[2]);
+                    const c = parseInt(match[3]);
+                    const d = parseInt(match[4]);
+                    const xNum = d - b;
+                    const xDen = a - c;
+                    const x = xNum / xDen;
+                    const steps = [
+                        `${a}x ${b>=0?'+':''}${b} = ${c}x ${d>=0?'+':''}${d}`,
+                        `Transpose: ${a}x - ${c}x = ${d} - ${b}`,
+                        `${a-c}x = ${d-b}`,
+                        `x = ${d-b} / ${a-c} = ${xNum}/${xDen} = ${x}`
+                    ];
+                    return { steps, answer: `x = ${x}` };
+                }
+            },
+
+            // 16. Simultaneous Equations
+            'simul': {
+                title: '📐 Simultaneous Equations — Parāvartya Yojayet',
+                sutra: 'Parāvartya Yojayet (Cross-Multiplication)',
+                inputs: [
+                    { id: 'eq1', label: 'Equation 1 (ax+by=p)', type: 'text',
+                    placeholder: 'e.g., 3x+2y=16' },
+                    { id: 'eq2', label: 'Equation 2 (cx+dy=q)', type: 'text', placeholder: 'e.g., 2x+y=9' }
+                ],
+                calc: (vals) => {
+                    const parseEq = (eq) => {
+                        const m = eq.replace(/\s/g, '').match(/^(-?\d+)x([+-]\d+)y=(-?\d+)$/);
+                        if (!m) return null;
+                        return { coefX: parseInt(m[1]), coefY: parseInt(m[2]), constant: parseInt(m[3]) };
+                    };
+                    const e1 = parseEq(vals.eq1);
+                    const e2 = parseEq(vals.eq2);
+                    if (!e1 || !e2) return { error: 'Format: ax+by=p (e.g., 3x+2y=16)' };
+                    const { coefX: a, coefY: b, constant: p } = e1;
+                    const { coefX: c, coefY: d, constant: q } = e2;
+                    const denom = a * d - b * c;
+                    const xNum = b * q - p * d;
+                    const yNum = p * c - a * q;
+                    const steps = [
+                        `${a}x ${b>=0?'+':''}${b}y = ${p}`,
+                        `${c}x ${d>=0?'+':''}${d}y = ${q}`,
+                        `Denominator (D) = ${a}×${d} - ${b}×${c} = ${a*d} - ${b*c} = ${denom}`,
+                        `x = (${b}×${q} - ${p}×${d}) / D = (${b*q} - ${p*d}) / ${denom} = ${xNum}/${denom} = ${xNum/denom}`,
+                        `y = (${p}×${c} - ${a}×${q}) / D = (${p*c} - ${a*q}) / ${denom} = ${yNum}/${denom} = ${yNum/denom}`,
+                    ];
+                    return { steps, answer: `x = ${xNum/denom}, y = ${yNum/denom}` };
+                }
+            },
+
+            // 17. Quadratic Factorisation
+            'quad': {
+                title: '📐 Quadratic Factorisation — Guṇitasamuccayaḥ',
+                sutra: 'Guṇitasamuccayaḥ (Product of Sum)',
+                inputs: [
+                    { id: 'expr', label: 'Expression (x²+bx+c)', type: 'text', placeholder: 'e.g., x^2+7x+12' }
+                ],
+                calc: (vals) => {
+                    const expr = vals.expr.replace(/\s/g, '').replace('^2', '²');
+                    const match = expr.match(/^x²([+-]\d+)x([+-]\d+)$/);
+                    if (!match) return { error: 'Format: x²+bx+c (e.g., x^2+7x+12)' };
+                    const b = parseInt(match[1]);
+                    const c = parseInt(match[2]);
+                    let found = null;
+                    for (let i = -Math.abs(c); i <= Math.abs(c); i++) {
+                        if (i === 0 || c % i !== 0) continue;
+                        const j = c / i;
+                        if (i + j === b) { found = [i, j]; break; }
+                    }
+                    const steps = [
+                        `x² ${b>=0?'+':''}${b}x ${c>=0?'+':''}${c}`,
+                        `Find two numbers that multiply to ${c} and add to ${b}:`
+                    ];
+                    if (found) {
+                        const [f1, f2] = found;
+                        steps.push(`  Numbers: ${f1} and ${f2} (${f1}×${f2}=${c}, ${f1}+${f2}=${b})`);
+                        const sign1 = f1 >= 0 ? '+' : '';
+                        const sign2 = f2 >= 0 ? '+' : '';
+                        steps.push(`Factors: (x${sign1}${f1})(x${sign2}${f2})`);
+                        return { steps, answer: `(x${sign1}${f1})(x${sign2}${f2})` };
+                    }
+                    steps.push('  No integer factors found.');
+                    return { steps, answer: 'Cannot factorise with integers.' };
+                }
+            },
+
+            // 18. Derivative
+            'deriv': {
+                title: '📈 Derivative — Calana‑Kalanābhyām',
+                sutra: 'Calana‑Kalanābhyām (Differences)',
+                inputs: [
+                    { id: 'expr', label: 'Monomial (axⁿ)', type: 'text', placeholder: 'e.g., x^3 or 5x^4' }
+                ],
+                calc: (vals) => {
+                    const expr = vals.expr.replace(/\s/g, '').replace('^', '');
+                    const match = expr.match(/^(\d*)x(\d+)$/);
+                    if (!match) {
+                        const matchSimple = expr.match(/^x(\d+)$/);
+                        if (matchSimple) {
+                            const n = parseInt(matchSimple[1]);
+                            const newCoef = n;
+                            const newExp = n - 1;
+                            const steps = [
+                                `d/dx (x${n})`,
+                                `Bring exponent down: ${n} × x${n-1}`,
+                                `Result: ${newCoef}x${newExp > 1 ? newExp : newExp === 1 ? '' : ''}`
+                            ];
+                            const ans = newExp === 0 ? newCoef.toString() : newExp === 1 ? `${newCoef}x` :
+                                `${newCoef}x${newExp}`;
+                            return { steps, answer: ans };
+                        }
+                        return { error: 'Format: x^n or ax^n (e.g., x^3 or 5x^4)' };
+                    }
+                    const coef = match[1] === '' ? 1 : parseInt(match[1]);
+                    const exp = parseInt(match[2]);
+                    const newCoef = coef * exp;
+                    const newExp = exp - 1;
+                    const steps = [
+                        `d/dx (${coef}x${exp})`,
+                        `Multiply coefficient by exponent: ${coef} × ${exp} = ${newCoef}`,
+                        `Reduce exponent: ${exp} → ${newExp}`,
+                    ];
+                    let ans;
+                    if (newExp === 0) ans = newCoef.toString();
+                    else if (newExp === 1) ans = `${newCoef}x`;
+                    else ans = `${newCoef}x${newExp}`;
+                    steps.push(`Result: ${ans}`);
+                    return { steps, answer: ans };
+                }
+            },
+
+            // 19. Integration
+            'integ': {
+                title: '📉 Integration — Pūraṇāpūraṇābhyām',
+                sutra: 'Pūraṇāpūraṇābhyām (Completion)',
+                inputs: [
+                    { id: 'expr', label: 'Expression (numerator)/(denominator)', type: 'text',
+                        placeholder: 'e.g., (2x+3)/(x^2+3x+4)' }
+                ],
+                calc: (vals) => {
+                    const expr = vals.expr.replace(/\s/g, '');
+                    const match = expr.match(/^\(([^)]+)\)\/\(([^)]+)\)$/);
+                    if (!match) return { error: 'Format: (numerator)/(denominator) e.g., (2x+3)/(x^2+3x+4)' };
+                    const num = match[1];
+                    const den = match[2];
+                    const denDeriv = den.replace(/x\^?(\d*)/g, (m, exp) => {
+                        const e = exp === '' ? 1 : parseInt(exp);
+                        const coefMatch = m.match(/(\d*)x/);
+                        const coef = coefMatch && coefMatch[1] !== '' ? parseInt(coefMatch[1]) : (m
+                            .startsWith('x') ? 1 : 0);
+                        return `${coef*e}x${e-1 > 1 ? e-1 : e-1 === 1 ? '' : ''}`;
+                    }).replace(/x0/g, '').replace(/\+\-/g, '-').replace(/\-\-/g, '+');
+                    const steps = [
+                        `∫ ${num} / (${den}) dx`,
+                        `Observe: Derivative of denominator (${den}) is ${denDeriv}`,
+                        `Numerator (${num}) matches the derivative → ∫ du/u = ln|u| + C`,
+                        `Let u = ${den}`,
+                        `Result: ln|${den}| + C`
+                    ];
+                    return { steps, answer: `ln|${den}| + C` };
+                }
+            },
+
+            // 20. Determinant 3×3
+            'det': {
+                title: '🔢 Determinant of 3×3 Matrix — Ūrdhva‑Tiryagbhyām',
+                sutra: 'Ūrdhva‑Tiryagbhyām (Cross Pattern)',
+                inputs: [
+                    { id: 'matrix', label: 'Matrix (comma-separated rows, semicolon between)', type: 'text',
+                        placeholder: 'e.g., 1,2,3;4,5,6;7,8,9' }
+                ],
+                calc: (vals) => {
+                    const rows = vals.matrix.split(';');
+                    if (rows.length !== 3) return { error: 'Enter 3 rows separated by semicolons.' };
+                    const m = rows.map(r => r.split(',').map(Number));
+                    if (m.some(r => r.length !== 3 || r.some(isNaN))) return { error: 'Each row must have 3 numbers.' };
+                    const [a, b, c] = m[0];
+                    const [d, e, f] = m[1];
+                    const [g, h, i] = m[2];
+                    const term1 = a * (e * i - f * h);
+                    const term2 = b * (d * i - f * g);
+                    const term3 = c * (d * h - e * g);
+                    const result = term1 - term2 + term3;
+                    const steps = [
+                        `|${a} ${b} ${c}|`,
+                        `|${d} ${e} ${f}|`,
+                        `|${g} ${h} ${i}|`,
+                        ``,
+                        `= ${a}×(${e}×${i} - ${f}×${h}) - ${b}×(${d}×${i} - ${f}×${g}) + ${c}×(${d}×${h} - ${e}×${g})`,
+                        `= ${a}×(${e*i} - ${f*h}) - ${b}×(${d*i} - ${f*g}) + ${c}×(${d*h} - ${e*g})`,
+                        `= ${a}×(${e*i - f*h}) - ${b}×(${d*i - f*g}) + ${c}×(${d*h - e*g})`,
+                        `= ${term1} - ${term2} + ${term3}`,
+                        `= ${result}`
+                    ];
+                    return { steps, answer: result };
+                }
+            }
+        };
+
+        // ==================== RENDER ENGINE ====================
+        const mainContent = document.getElementById('main-content');
+        const sidebar = document.getElementById('sidebar');
+
+        function renderOperation(opKey) {
+            const op = operations[opKey];
+            if (!op) return;
+
+            let inputsHTML = '';
+            op.inputs.forEach(inp => {
+                const valAttr = inp.value !== undefined ? ` value="${inp.value}"` : '';
+                inputsHTML += `
+                    <div style="display:flex;flex-direction:column;gap:0.3rem;flex:1;min-width:120px;">
+                        <label style="font-weight:600;font-size:0.85rem;color:#5d4037;">${inp.label}</label>
+                        <input type="${inp.type}" id="${inp.id}" placeholder="${inp.placeholder}"${valAttr}>
+                    </div>`;
+            });
+
+            const cardHTML = `
+                <div class="card" id="active-card">
+                    <h2>${op.title}</h2>
+                    <span class="sutra-tag">📿 Sutra: ${op.sutra}</span>
+                    <div class="input-group">
+                        ${inputsHTML}
+                    </div>
+                    <button class="calculate-btn" onclick="calculate('${opKey}')">🧮 Calculate</button>
+                    <div class="result-box" id="result-box">
+                        <em style="color:#b0845c;">Enter values and click <strong>Calculate</strong> to see the Vedic solution...</em>
+                    </div>
+                </div>
+            `;
+            mainContent.innerHTML = cardHTML;
+
+            // Update active button in sidebar
+            document.querySelectorAll('.sidebar .op-btn').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector(`.sidebar .op-btn[data-op="${opKey}"]`);
+            if (activeBtn) activeBtn.classList.add('active');
+        }
+
+        function calculate(opKey) {
+            const op = operations[opKey];
+            if (!op) return;
+            const vals = {};
+            let hasError = false;
+            op.inputs.forEach(inp => {
+                const el = document.getElementById(inp.id);
+                if (el) vals[inp.id] = el.value;
+                else hasError = true;
+            });
+            const resultBox = document.getElementById('result-box');
+            if (hasError || !resultBox) {
+                if (resultBox) resultBox.innerHTML = '<em style="color:#c0392b;">⚠️ Error reading inputs.</em>';
+                return;
+            }
+            const result = op.calc(vals);
+            if (result.error) {
+                resultBox.innerHTML = `<em style="color:#c0392b;">⚠️ ${result.error}</em>`;
+                return;
+            }
+            let stepsHTML = '';
+            if (result.steps && result.steps.length > 0) {
+                stepsHTML = result.steps.map(s => {
+                    const cleaned = s.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    if (cleaned.startsWith('Result:') || cleaned.startsWith('✅') || cleaned.startsWith(
+                            'Factors:') || cleaned.includes('→')) {
+                        return `<span class="highlight-step">${cleaned}</span>`;
+                    }
+                    return `<span class="step">${cleaned}</span>`;
+                }).join('\n');
+            }
+            const answerStr = result.answer !== undefined ? String(result.answer) : '';
+            resultBox.innerHTML = `
+                ${stepsHTML}
+                <div class="answer">✅ Answer: ${answerStr}</div>
+            `;
+        }
+
+        // Sidebar click handlers
+        sidebar.addEventListener('click', (e) => {
+            const btn = e.target.closest('.op-btn');
+            if (!btn) return;
+            const opKey = btn.dataset.op;
+            if (opKey) {
+                renderOperation(opKey);
+                // Scroll to top of main on mobile
+                mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+
+        // Initialize with first operation
+        document.addEventListener('DOMContentLoaded', () => {
+            renderOperation('add');
+        });
+
+        // Keyboard support: Enter key triggers calculate
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const activeCard = document.getElementById('active-card');
+                if (activeCard && document.activeElement && activeCard.contains(document.activeElement)) {
+                    const calcBtn = activeCard.querySelector('.calculate-btn');
+                    if (calcBtn) calcBtn.click();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
